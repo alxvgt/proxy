@@ -4,6 +4,7 @@ services:
     nginx-proxy:
         container_name: proxy
         image: jwilder/nginx-proxy
+        restart: always
         networks:
             - network-proxy
         ports:
