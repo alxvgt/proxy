@@ -11,7 +11,24 @@ services:
             - '80:80'
             - '443:443'
         volumes:
+            - '/docker/volumes/etc/nginx/certs:/etc/nginx/certs'
+            - '/docker/volumes/etc/nginx/vhost.d:/etc/nginx/vhost.d'
+            - '/docker/volumes/usr/share/nginx/html:/usr/share/nginx/html'
             - '/var/run/docker.sock:/tmp/docker.sock:ro'
+    letsencrypt:
+        container_name: letsencrypt
+        image: jrcs/letsencrypt-nginx-proxy-companion
+        restart: always
+        environment:
+            - NGINX_PROXY_CONTAINER=proxy
+            - DEBUG=true
+        networks:
+            - network-proxy
+        volumes:
+            - '/docker/volumes/etc/nginx/certs:/etc/nginx/certs'
+            - '/docker/volumes/etc/nginx/vhost.d:/etc/nginx/vhost.d'
+            - '/docker/volumes/usr/share/nginx/html:/usr/share/nginx/html'
+            - '/var/run/docker.sock:/var/run/docker.sock:ro'
 networks:
     network-proxy:
         name: network-proxy
