@@ -19,7 +19,7 @@ services:
         image: jrcs/letsencrypt-nginx-proxy-companion
         restart: always
         environment:
-            - NGINX_PROXY_CONTAINER=proxy
+            - NGINX_PROXY_CONTAINER=nginx-proxy
             - DEBUG=true
         volumes:
             - '/docker/volumes/etc/nginx/certs:/etc/nginx/certs'
