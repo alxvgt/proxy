@@ -2,11 +2,8 @@ version: '3.5'
 
 services:
     nginx-proxy:
-        container_name: proxy
         image: jwilder/nginx-proxy
         restart: always
-        networks:
-            - network-proxy
         ports:
             - '80:80'
             - '443:443'
@@ -22,13 +19,8 @@ services:
         environment:
             - NGINX_PROXY_CONTAINER=proxy
             - DEBUG=true
-        networks:
-            - network-proxy
         volumes:
             - '/docker/volumes/etc/nginx/certs:/etc/nginx/certs'
             - '/docker/volumes/etc/nginx/vhost.d:/etc/nginx/vhost.d'
             - '/docker/volumes/usr/share/nginx/html:/usr/share/nginx/html'
             - '/var/run/docker.sock:/var/run/docker.sock:ro'
-networks:
-    network-proxy:
-        name: network-proxy
