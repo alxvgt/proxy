@@ -13,7 +13,6 @@ services:
             - '/docker/volumes/usr/share/nginx/html:/usr/share/nginx/html'
             - '/var/run/docker.sock:/tmp/docker.sock:ro'
     letsencrypt:
-        container_name: letsencrypt
         image: jrcs/letsencrypt-nginx-proxy-companion
         restart: always
         environment:
