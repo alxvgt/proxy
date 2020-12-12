@@ -12,6 +12,9 @@ services:
             - '/docker/volumes/etc/nginx/vhost.d:/etc/nginx/vhost.d'
             - '/docker/volumes/usr/share/nginx/html:/usr/share/nginx/html'
             - '/var/run/docker.sock:/tmp/docker.sock:ro'
+        networks:
+            - shared-proxy
+
     letsencrypt:
         image: jrcs/letsencrypt-nginx-proxy-companion
         restart: on-failure
@@ -23,3 +26,9 @@ services:
             - '/docker/volumes/etc/nginx/vhost.d:/etc/nginx/vhost.d'
             - '/docker/volumes/usr/share/nginx/html:/usr/share/nginx/html'
             - '/var/run/docker.sock:/var/run/docker.sock:ro'
+        networks:
+            - shared-proxy
+
+networks:
+    shared-proxy:
+        external: true
