@@ -3,7 +3,7 @@ version: '3.5'
 services:
     nginx-proxy:
         image: jwilder/nginx-proxy
-        restart: always
+        restart: on-failure
         ports:
             - '80:80'
             - '443:443'
@@ -14,7 +14,7 @@ services:
             - '/var/run/docker.sock:/tmp/docker.sock:ro'
     letsencrypt:
         image: jrcs/letsencrypt-nginx-proxy-companion
-        restart: always
+        restart: on-failure
         environment:
             - NGINX_PROXY_CONTAINER=proxy
             - DEBUG=true
