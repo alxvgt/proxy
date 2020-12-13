@@ -1,34 +1,39 @@
-version: '3.5'
+version: '3'
 
 services:
-    nginx-proxy:
-        image: jwilder/nginx-proxy
-        restart: always
+    reverse-proxy:
+        # The official v2 Traefik docker image
+        image: traefik:v2.3
         ports:
-            - '80:80'
-            - '443:443'
+            - "80:80"
+            - "8080:8080" # traefik dashboard
+            - "443:443"
+        command:
+            - --api.insecure=true # set to 'false' on production
+            - --api.dashboard=true # see https://docs.traefik.io/v2.0/operations/dashboard/#secure-mode for how to secure the dashboard
+            - --api.debug=true # enable additional endpoints for debugging and profiling
+            - --log.level=DEBUG # debug while we get it working, for more levels/info see https://docs.traefik.io/observability/logs/
+            - --providers.docker=true
+            - --providers.docker.swarmMode=true
+            - --providers.docker.exposedbydefault=false
+            - --providers.docker.network=proxy
+            - --entrypoints.http.address=:80
+            - --entrypoints.https.address=:443
+            - --entrypoints.http.http.redirections.entryPoint.to=https
+            - --entrypoints.http.http.redirections.entryPoint.scheme=https
+            - --entrypoints.http.http.redirections.entrypoint.permanent=true
+            - --certificatesresolvers.mytlschallenge.acme.httpChallenge.entrypoint=http
+            - --certificatesresolvers.mytlschallenge.acme.email=avingtier@gmail.com
+            - --certificatesresolvers.mytlschallenge.acme.storage=/letsencrypt/acme.json
         volumes:
-            - '/docker/volumes/etc/nginx/certs:/etc/nginx/certs'
-            - '/docker/volumes/etc/nginx/vhost.d:/etc/nginx/vhost.d'
-            - '/docker/volumes/usr/share/nginx/html:/usr/share/nginx/html'
-            - '/var/run/docker.sock:/tmp/docker.sock:ro'
-        networks:
-            - shared-proxy
-
-    letsencrypt:
-        image: jrcs/letsencrypt-nginx-proxy-companion
-        restart: always
-        environment:
-            - NGINX_PROXY_CONTAINER=nginx-proxy
-            - DEBUG=true
-        volumes:
-            - '/docker/volumes/etc/nginx/certs:/etc/nginx/certs'
-            - '/docker/volumes/etc/nginx/vhost.d:/etc/nginx/vhost.d'
-            - '/docker/volumes/usr/share/nginx/html:/usr/share/nginx/html'
-            - '/var/run/docker.sock:/var/run/docker.sock:ro'
+            - letsencrypt:/letsencrypt
+            - /var/run/docker.sock:/var/run/docker.sock
         networks:
             - shared-proxy
 
 networks:
     shared-proxy:
         external: true
+
+volumes:
+    letsencrypt:
