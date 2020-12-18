@@ -30,6 +30,13 @@ services:
             - /var/run/docker.sock:/var/run/docker.sock
         networks:
             - shared-proxy
+        deploy:
+            labels:
+                - "traefik.enable=true"
+                - "traefik.http.routers.proxy.rule=Host(`traefik.418.ovh`)"
+                - "traefik.http.routers.proxy.tls=true"
+                - "traefik.http.routers.proxy.tls.certresolver=mytlschallenge"
+                - "traefik.http.services.proxy.loadbalancer.server.port=8080"
 
 networks:
     shared-proxy:
